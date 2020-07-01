@@ -66,15 +66,22 @@ export default styled(Card)`
   }
 
   .action {
-    top: 10px;
-    right: 10px;
+    top: 5px;
+    right: 5px;
     position: absolute;
 
     button {
+      padding: 10px;
+
       svg {
         fill: #555;
-        width: 15px;
-        height: 15px;
+        width: 13px;
+        height: 13px;
+      }
+
+      &:hover {
+        background: #ddd;
+        border-radius: 50%;
       }
     }
   }

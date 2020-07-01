@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Router } from '@reach/router';
 
 import Nav from './Nav';
 import Header from './Header';
 import People from './People';
+import Settings from './Settings';
 
 function Home({ className }) {
   return (
@@ -12,7 +14,10 @@ function Home({ className }) {
       <Nav />
       <div className="col">
         <Header />
-        <People />
+        <Router className="router">
+          <People path="/" />
+          <Settings path="/settings" user={{}} />
+        </Router>
       </div>
     </section>
   );
@@ -33,5 +38,9 @@ export default styled(Home)`
     display: flex;
     overflow: auto;
     flex-direction: column;
+
+    .router {
+      flex: auto;
+    }
   }
 `;

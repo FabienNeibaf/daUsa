@@ -1,66 +1,125 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import React, { useState } from 'react';
 
 import AuthHeader from './AuthHeader';
+import { validateEmail, validatePassword, matchPassword } from '../utils';
 
-const Register = ({ className }) => (
-  <section className={className}>
-    <AuthHeader />
-    <form action="">
-      <h3>Create an account</h3>
-      <label>
-        <span>First Name</span>
-        <input type="text"/>
-      </label>
-      <label>
-        <span>Last Name</span>
-        <input type="text"/>
-      </label>
-      <label>
-        <span>Job</span>
-        <input type="text"/>
-      </label>
-      <label>
-        <span>Email</span>
-        <input type="email"/>
-      </label>
-      <label>
-        <span>Password</span>
-        <input type="text"/>
-      </label>
-      <label>
-        <span>Confirmation Password</span>
-        <input type="text"/>
-      </label>
-      <button type="submit">Submit</button>
-      <div className="login">
-        Have an account? <a href="/login">Login</a>
-      </div>
-    </form>
-  </section>
-);
+const Register = ({ className }) => {
+  const [state, setState] = useState({
+    firstName: '',
+    lastName: '',
+    job: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+    error: {}
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const error = { ...state.error };
+
+    if (name === 'email') {
+      error.email = value && !validateEmail(value) ? 'Invalid Email' : '';
+    } else if (name === 'password') {
+      const { error: msg } = validatePassword(value);
+      error.password = value && msg ? msg : '';
+    } else if (name === 'passwordConfirmation') {
+      const isMatch = matchPassword(state.password, value);
+      error.passwordConfirmation = value && !isMatch ? "Password doesn't match" : '';
+    } else if (/firstName|lastName/.test(name)) {
+      error[name] = '';
+    }
+
+    setState((prev) => ({ ...prev, [name]: value, error }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const error = { ...state.error };
+    if (!state.email) error.email = 'Email is required';
+    if (!state.password) error.password = 'Password is required';
+    if (!state.lastName) error.lastName = 'Last name is required';
+    if (!state.firstName) error.firstName = 'First name is required';
+
+    if (!error.email && !error.password && !error.lastName &&
+      !error.firstName && !error.passwordConfirmation) {
+      console.log('OK');
+    } else {
+      setState((prev) => ({ ...prev, error }));
+    }
+  };
+
+  return (
+    <section className={className}>
+      <AuthHeader />
+      <form onSubmit={handleSubmit}>
+        <h3>Create an account</h3>
+        <label>
+          <span>First Name</span>
+          <input type="text" name="firstName" value={state.firstName} onChange={handleChange} />
+          <div className="error">{state.error.firstName}</div>
+        </label>
+        <label>
+          <span>Last Name</span>
+          <input type="text" name="lastName" value={state.lastName} onChange={handleChange} />
+          <div className="error">{state.error.lastName}</div>
+        </label>
+        <label>
+          <span>Job</span>
+          <input type="text" name="job" value={state.job} onChange={handleChange} />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" value={state.email} onChange={handleChange} />
+          <div className="error">{state.error.email}</div>
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" value={state.password} onChange={handleChange} />
+          <div className="error">{state.error.password}</div>
+        </label>
+        <label>
+          <span>Confirmation Password</span>
+          <input type="password" name="passwordConfirmation" value={state.passwordConfirmation} onChange={handleChange} />
+          <div className="error">{state.error.passwordConfirmation}</div>
+        </label>
+        <button type="submit">Submit</button>
+        <div className="login">
+          Have an account? <a href="/login">Sign in</a>
+        </div>
+      </form>
+    </section>
+  );
+};
 
 Register.propTypes = {
   className: PropTypes.string.isRequired,
 }
 
 export default styled(Register)`
-  background: #f7f7f7;
+  min-height: 100vh;
+  background: #f4f4f7;
+  border-bottom: 1px solid transparent;
 
   form {
-    margin: 20px auto;
     max-width: 500px;
     background: #fff;
     border-radius: 5px;
-    padding: 0 20px 20px;
-    border: 1px solid #ccc;
+    margin: 40px auto 20px;
 
     h3 {
-      font-size: 1.2em;
-      font-weight: 700;
-      padding: 20px 10px;
+      color: #0b1857;
+      font-size: 2em;
+      font-weight: 300;
       text-align: center;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+
+      @media (max-width: 500px) {
+        font-size: 1.5em;
+      }
     }
 
     label, span, input, button[type=submit] {
@@ -68,37 +127,58 @@ export default styled(Register)`
     }
 
     label {
-      margin-bottom: 20px;
+      padding: 0 20px;
+      position: relative;
 
       span {
-        font-weight: 700;
-        margin-bottom: 5px;
+        font-weight: 400;
+        margin-bottom: 3px;
       }
+
       input {
         width: 100%;
-        padding: 5px;
-        border-radius: 2px;
-        border: 1px solid #aaa;
+        border: none;
+        padding: 3px 5px;
+        font-weight: 300;
+        border-radius: 3px;
+        background: #f3f3f4;
+      }
+
+      &:not(:last-of-type) {
+        margin-bottom: 20px;
+      }
+
+      .error {
+        top: 100%;
+        color: #f00;
+        font-size: .85em;
+        position: absolute;
       }
     }
 
     button[type=submit] {
       color: #fff;
-      margin: auto;
-      min-width: 200px;
-      background: #45f;
-      font-weight: 700;
+      margin: 30px auto;
+      min-width: 150px;
+      font-weight: 500;
       padding: 5px 20px;
       border-radius: 2px;
+      background: #978600;
+    }
+
+    @media (max-width: 510px) {
+      max-width: 95%;
     }
   }
 
   .login {
-    margin-top: 20px;
+    padding: 10px 20px;
     text-align: center;
+    background: #fafafb;
+    border-radius: 0 0 5px 5px;
 
     a {
-      color: #fe3;
+      color: #1330c0;
     }
   }
 `;
