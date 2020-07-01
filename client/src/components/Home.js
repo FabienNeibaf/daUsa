@@ -7,6 +7,7 @@ import Nav from './Nav';
 import Header from './Header';
 import People from './People';
 import Settings from './Settings';
+import NotFound from './NotFound';
 
 function Home({ className }) {
   return (
@@ -17,6 +18,7 @@ function Home({ className }) {
         <Router className="router">
           <People path="/" />
           <Settings path="/settings" user={{}} />
+          <NotFound default />
         </Router>
       </div>
     </section>

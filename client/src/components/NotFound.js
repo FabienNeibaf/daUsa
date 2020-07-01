@@ -2,22 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Login = ({ className }) => (
+const NotFound = ({ className }) => (
   <section className={className}>
     PAGE NOT FOUND
   </section>
 );
 
-Login.propTypes = {
+NotFound.propTypes = {
   className: PropTypes.string.isRequired,
 }
 
-export default styled(Login)`
+export default styled(NotFound)`
   display: flex;
   color: #0b1857;
-  font-size: 3em;
+  font-size: 4em;
   min-height: 100%;
-  font-weight: 500;
+  font-weight: 400;
   background: #f4f4f7;
   align-items: center;
   justify-content: center;
